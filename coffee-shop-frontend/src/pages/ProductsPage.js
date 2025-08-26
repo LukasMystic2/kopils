@@ -5,7 +5,7 @@ import ProductCardSkeleton from '../components/ProductCardSkeleton';
 import SEO from '../components/SEO'; // 1. IMPOR KOMPONEN SEO
 
 const ProductsPage = () => {
-  const API_URL = `${process.env.SERVER_URL}`;
+  const API_URL = process.env.SERVER_URL;
   const { data: products, loading: productsLoading, error: productsError } = useFetch(`${API_URL}/api/products`);
   const { data: categories, loading: categoriesLoading, error: categoriesError } = useFetch(`${API_URL}/api/categories`);
 

@@ -133,7 +133,7 @@ const ManageAboutPage = ({ showNotification = () => {} }) => {
   const [lastUpdatedBy, setLastUpdatedBy] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingContent, setIsLoadingContent] = useState(true);
-  const API_URL = `${process.env.SERVER_URL}`;
+  const API_URL = process.env.SERVER_URL;
 
   const fetchAboutContent = useCallback(async () => {
     setIsLoadingContent(true);

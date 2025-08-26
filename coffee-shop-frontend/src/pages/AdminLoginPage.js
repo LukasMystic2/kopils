@@ -7,7 +7,7 @@ const AdminLoginPage = ({ onLoginSuccess }) => {
     const [rememberMe, setRememberMe] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.SERVER_URL;
 
     const handleSubmit = async (e) => {
         e.preventDefault();

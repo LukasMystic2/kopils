@@ -4,7 +4,7 @@ import useFetch from '../hooks/useFetch';
 import SEO from '../components/SEO'; // 1. IMPOR KOMPONEN SEO
 
 const AboutPage = () => {
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.SERVER_URL;
     const { data: aboutContent, loading, error } = useFetch(`${API_URL}/api/about`);
     const [isVisible, setIsVisible] = useState(false);
     const [scrollY, setScrollY] = useState(0);

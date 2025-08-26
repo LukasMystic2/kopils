@@ -6,7 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 
 const NewsArticlePage = () => {
     const { slug } = useParams();
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.SERVER_URL;
     const { data: article, loading, error } = useFetch(`${API_URL}/api/news/${slug}`);
     const [mounted, setMounted] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);

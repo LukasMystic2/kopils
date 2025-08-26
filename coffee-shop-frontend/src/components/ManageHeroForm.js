@@ -10,7 +10,7 @@ const ManageHeroForm = ({ initialData, onUpdate, showNotification }) => {
     const [slides, setSlides] = useState(defaultSlides);
     const [imageFiles, setImageFiles] = useState([null, null, null]);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.SERVER_URL;
 
     useEffect(() => {
         if (initialData && initialData.details && Array.isArray(initialData.details)) {

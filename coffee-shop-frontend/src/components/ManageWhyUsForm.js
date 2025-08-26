@@ -11,7 +11,7 @@ const ManageWhyUsForm = ({ initialData, onUpdate, showNotification }) => {
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.SERVER_URL;
 
     useEffect(() => {
         if (initialData) {

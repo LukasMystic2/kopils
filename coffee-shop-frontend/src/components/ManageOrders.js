@@ -11,7 +11,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.SERVER_URL;
 
     const handleUpdate = async () => {
         setIsUpdating(true);

@@ -51,7 +51,7 @@ const HomePage = ({ onUpdate }) => {
   const [topNews, setTopNews] = useState([]);
   const [siteContent, setSiteContent] = useState(defaultContent);
   const [isVisible, setIsVisible] = useState({});
-  const API_URL = `${process.env.SERVER_URL}`;
+  const API_URL = process.env.SERVER_URL;
 
   const { data: productsData, loading: productsLoading } = useFetch(`${API_URL}/api/products`);
   const { data: contentData } = useFetch(`${API_URL}/api/content`);

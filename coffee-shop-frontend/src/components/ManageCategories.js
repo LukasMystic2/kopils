@@ -27,7 +27,7 @@ const ManageCategories = ({ showNotification = () => {} }) => {
     const [categories, setCategories] = useState([]);
     const [name, setName] = useState('');
     const [editingCategory, setEditingCategory] = useState(null);
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.SERVER_URL;
 
     // State untuk menangani efek hover pada tombol secara inline
     const [submitHover, setSubmitHover] = useState(false);

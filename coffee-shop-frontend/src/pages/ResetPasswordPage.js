@@ -31,7 +31,7 @@ const ResetPasswordPage = ({ showNotification }) => {
     const [mounted, setMounted] = useState(false);
     const { token } = useParams();
     const navigate = useNavigate();
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.SERVER_URL;
 
     useEffect(() => {
         setMounted(true);
