@@ -40,6 +40,7 @@ const allowedOrigins = [
 console.log("DEBUG: Allowed Origins ->", allowedOrigins); // <-- DEBUG
 
 const io = new Server(server, {
+    transports: ['websocket'], // <-- ADD THIS LINE
     cors: {
         origin: function (origin, callback) {
             console.log("DEBUG: CORS check for origin ->", origin); // <-- DEBUG
