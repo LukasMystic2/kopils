@@ -1,0 +1,20 @@
+{
+  "short_name": "Kopi LS",
+  "name": "Kopi Luwak Satria 11",
+  "icons": [
+    {
+      "src": "assets/Logo_bubuk.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "assets/Logo_bubuk.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

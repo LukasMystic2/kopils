@@ -1,0 +1,77 @@
+/* ProductCardSkeleton.css */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(55, 65, 81, 0.8),
+    rgba(75, 85, 99, 1),
+    rgba(55, 65, 81, 0.8)
+  );
+  background-size: 200% 100%;
+}
+
+/* Delayed pulse animations for the dots */
+.skeleton-pulse-delayed-0 {
+  animation-delay: 0s;
+}
+
+.skeleton-pulse-delayed-1 {
+  animation-delay: 0.2s;
+}
+
+.skeleton-pulse-delayed-2 {
+  animation-delay: 0.4s;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .skeleton-shimmer {
+    animation-duration: 1.5s; /* Slightly faster on mobile for better perceived performance */
+  }
+  
+  /* Reduce backdrop blur on mobile for better performance */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(2px);
+  }
+  
+  /* Disable complex animations on mobile for performance */
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton-shimmer {
+      animation: none;
+      background: rgba(75, 85, 99, 1);
+    }
+    
+    .animate-pulse {
+      animation: none;
+    }
+  }
+}
+
+/* High-density displays optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  .skeleton-shimmer {
+    background-size: 400% 100%; /* Better shimmer on retina displays */
+  }
+}
+
+/* Dark mode adjustments for better contrast on mobile */
+@media (prefers-color-scheme: dark) {
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(31, 41, 55, 0.9),
+      rgba(55, 65, 81, 1),
+      rgba(31, 41, 55, 0.9)
+    );
+  }
+}
