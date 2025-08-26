@@ -4,7 +4,7 @@ import useFetch from '../hooks/useFetch';
 import SEO from '../components/SEO'; // 1. IMPOR KOMPONEN SEO
 
 const NewsPage = () => {
-  const API_URL = process.env.SERVER_URL;
+  const API_URL = process.env.REACT_APP_SERVER_URL;
   const { data: news, loading, error } = useFetch(`${API_URL}/api/news`);
   
   const [searchTerm, setSearchTerm] = useState('');

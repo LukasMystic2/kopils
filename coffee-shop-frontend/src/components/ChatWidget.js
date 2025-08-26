@@ -11,7 +11,7 @@ const ChatWidget = ({ userInfo }) => {
     const [mounted, setMounted] = useState(false);
     const socket = useSocket();
     const chatEndRef = useRef(null);
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
 
     useEffect(() => {
         setMounted(true);

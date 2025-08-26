@@ -5,7 +5,7 @@ import useFetch from '../hooks/useFetch';
 
 const OrderPage = ({ userInfo, showNotification }) => {
     const { cartItems, updateQty, removeFromCart, clearCart } = useCart();
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
     const { data: paymentInfo } = useFetch(`${API_URL}/api/payment-info`);
     const [proofFile, setProofFile] = useState(null);
     const [shippingMethod, setShippingMethod] = useState('Delivery');

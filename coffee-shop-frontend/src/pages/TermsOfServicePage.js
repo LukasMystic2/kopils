@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useFetch from '../hooks/useFetch';
 
 const TermsOfServicePage = () => {
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
     const { data: terms, loading, error } = useFetch(`${API_URL}/api/terms-of-service`);
     const [mounted, setMounted] = useState(false);
 

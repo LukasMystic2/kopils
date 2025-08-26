@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import useFetch from '../hooks/useFetch';
 
 const PrivacyPolicyPage = () => {
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
     const { data: policy, loading, error } = useFetch(`${API_URL}/api/privacy-policy`);
     const [mounted, setMounted] = useState(false);
 

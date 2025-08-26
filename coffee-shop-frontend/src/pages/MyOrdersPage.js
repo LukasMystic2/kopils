@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 
 const MyOrdersPage = ({ userInfo, showNotification }) => {
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
     const { data: orders, loading, error, setData: setOrders } = useFetch(`${API_URL}/api/orders/myorders`, userInfo?.token, true);
     const [shippingProofFile, setShippingProofFile] = useState(null);
     const [uploadingOrderId, setUploadingOrderId] = useState(null);

@@ -14,7 +14,7 @@ const ManageContentForm = ({ sectionId, initialData, label, hasTitle = false, ha
     const [imageFile, setImageFile] = useState(null);
     const [imageUrl, setImageUrl] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
 
     useEffect(() => {
         if (initialData) {

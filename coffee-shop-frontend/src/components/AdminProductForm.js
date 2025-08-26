@@ -41,7 +41,7 @@ const ManageProducts = ({ showNotification = () => {} }) => {
     const [submitHover, setSubmitHover] = useState(false);
     const [cancelHover, setCancelHover] = useState(false);
 
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
 
     const fetchProducts = useCallback(async () => {
         try {

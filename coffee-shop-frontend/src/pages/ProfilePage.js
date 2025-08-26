@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
     
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');

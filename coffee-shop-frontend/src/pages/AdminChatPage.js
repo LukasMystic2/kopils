@@ -3,7 +3,7 @@ import { useSocket } from '../context/SocketContext';
 import useFetch from '../hooks/useFetch';
 
 const AdminChatPage = ({ adminInfo }) => {
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
     const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
     
     const { data: conversations, loading, error, setData: setConversations } = useFetch(`${API_URL}/api/chat/conversations`, token, true);

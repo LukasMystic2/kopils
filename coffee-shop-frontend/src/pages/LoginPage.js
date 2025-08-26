@@ -159,7 +159,7 @@ const LoginForm = ({ showNotification, onForgotPassword, onLoginSuccess }) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            const response = await fetch(`${process.env.SERVER_URL}/api/users/login`, {
+            const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -191,7 +191,7 @@ const LoginForm = ({ showNotification, onForgotPassword, onLoginSuccess }) => {
     const handleResend = async () => {
         setIsResending(true);
         try {
-            const response = await fetch(`${process.env.SERVER_URL}/api/users/resend-verification`, {
+            const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/resend-verification`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: resendEmail }),
@@ -282,7 +282,7 @@ const RegisterForm = ({ showNotification, setActiveTab }) => {
         }
         setIsSubmitting(true);
         try {
-            const response = await fetch(`${process.env.SERVER_URL}/api/users/register`, {
+            const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/users/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password }),

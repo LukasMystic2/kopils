@@ -9,7 +9,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ userInfo, adminInfo, children }) => {
     const [socket, setSocket] = useState(null);
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
 
     useEffect(() => {
         const newSocket = io(API_URL);

@@ -26,7 +26,7 @@ const editorConfiguration = {
 };
 
 const ManagePrivacyPolicy = ({ showNotification }) => {
-    const API_URL = process.env.SERVER_URL;
+    const API_URL = process.env.REACT_APP_SERVER_URL;
     const token = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
 
     const [content, setContent] = useState('');
