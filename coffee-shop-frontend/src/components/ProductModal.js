@@ -12,7 +12,6 @@ const ProductModal = ({ isOpen, onRequestClose, product }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      // Start animation after a short delay
       const timer = setTimeout(() => setIsAnimating(true), 10);
       setImageLoaded(false);
       return () => clearTimeout(timer);
@@ -26,8 +25,6 @@ const ProductModal = ({ isOpen, onRequestClose, product }) => {
   const handleAddToCart = () => {
     setAddToCartClicked(true);
     addToCart(product);
-    
-    // Close modal after animation
     setTimeout(() => {
       onRequestClose();
     }, 1200);
@@ -37,44 +34,45 @@ const ProductModal = ({ isOpen, onRequestClose, product }) => {
     setIsAnimating(false);
     setTimeout(() => {
       onRequestClose();
-    }, 500); // Match this to the transition duration
+    }, 500);
   };
 
-  if (!isOpen) {
-    return null;
-  }
+  if (!isOpen) return null;
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
-  };
+  const formatPrice = (price) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(price);
 
   const isSoldOut = product.stock === 0;
-  const discountedPrice = product.discount > 0 ? product.price * (1 - product.discount / 100) : product.price;
+  const discountedPrice =
+    product.discount > 0
+      ? product.price * (1 - product.discount / 100)
+      : product.price;
 
-  // The modal content is now returned inside a Portal
   return ReactDOM.createPortal(
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-500 ease-out ${
-          isAnimating ? 'bg-black/70 backdrop-blur-md' : 'bg-black/0 backdrop-blur-none'
+          isAnimating
+            ? 'bg-black/70 backdrop-blur-md'
+            : 'bg-black/0 backdrop-blur-none'
         }`}
         onClick={handleClose}
       >
-        
-        {/* Modal Content - Centered and Portrait */}
+        {/* Modal Content */}
         <div
-          className={`bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white w-full max-w-sm max-h-[90vh] transition-all duration-500 ease-out border border-gray-700/50 shadow-2xl relative overflow-hidden rounded-2xl flex flex-col
-                    ${isAnimating ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+          className={`bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 text-white w-full max-w-sm h-auto max-h-[95vh] transition-all duration-500 ease-out border border-gray-700/50 shadow-2xl relative rounded-2xl flex flex-col
+            ${isAnimating ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Animated Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-green-500/5 animate-gradient-shift"></div>
-
-          {/* Close Button with Animation */}
-          <button 
+          {/* Close Button */}
+          <button
             onClick={handleClose}
-            className="absolute top-3 right-3 w-10 h-10 flex items-center justify-center bg-gray-800/80 hover:bg-red-600/80 rounded-full z-20 transition-all duration-300 transform hover:scale-110 hover:rotate-90 backdrop-blur-sm border border-gray-600/50 group"
+            className="sticky top-3 right-3 self-end mr-3 w-10 h-10 flex items-center justify-center bg-gray-800/80 hover:bg-red-600/80 rounded-full z-20 transition-all duration-300 transform hover:scale-110 hover:rotate-90 backdrop-blur-sm border border-gray-600/50 group"
             aria-label="Tutup modal"
           >
             <i className="fas fa-times text-gray-300 group-hover:text-white transition-colors duration-300"></i>
@@ -88,19 +86,22 @@ const ProductModal = ({ isOpen, onRequestClose, product }) => {
             </div>
           )}
 
-          {/* Image Section with Loading Animation */}
-          <div className="relative w-full h-96 overflow-hidden rounded-t-2xl group flex-shrink-0">
-            <img 
-              src={product.imageUrl || 'https://placehold.co/600x400/111827/4b5563?text=Kopi+LS'} 
+          {/* Image Section */}
+          <div className="relative w-full aspect-square overflow-hidden group flex-shrink-0">
+            <img
+              src={
+                product.imageUrl ||
+                'https://placehold.co/600x400/111827/4b5563?text=Kopi+LS'
+              }
               alt={product.name}
               className={`w-full h-full object-cover transition-all duration-700 ${
                 imageLoaded ? 'scale-100 opacity-100' : 'scale-110 opacity-0'
               } ${isSoldOut ? 'grayscale' : 'group-hover:scale-105'}`}
               onLoad={() => setImageLoaded(true)}
             />
-            
+
             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent"></div>
-            
+
             <div className="absolute inset-0 pointer-events-none">
               <div className="absolute top-8 left-8 w-2 h-2 bg-amber-400/60 rounded-full animate-float-1"></div>
               <div className="absolute top-16 right-12 w-1.5 h-1.5 bg-green-400/60 rounded-full animate-float-2"></div>
@@ -122,74 +123,109 @@ const ProductModal = ({ isOpen, onRequestClose, product }) => {
             )}
           </div>
 
-          {/* Content Section with Scroll */}
-          <div className="flex flex-col relative z-10 flex-grow min-h-0">
-            <div className="p-6 flex-shrink-0">
-              {product.category && (
-                <div className="inline-block mb-3">
-                  <span className="text-xs font-semibold text-amber-400 bg-gradient-to-r from-amber-500/20 to-amber-600/20 border border-amber-500/30 rounded-full px-3 py-1 backdrop-blur-sm animate-glow">
-                    {product.category.name}
-                  </span>
-                </div>
-              )}
-
-              <h2 className="text-2xl font-bold text-white font-heading mb-3 animate-slide-in-right bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text">
-                {product.name}
-              </h2>
-              
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-4 animate-slide-in-left">
-                {product.weight && <span>Berat: {product.weight}</span>}
-                {product.volume && <span>Volume: {product.volume}</span>}
-                {product.stock !== undefined && <span className={product.stock > 10 ? 'text-green-400' : product.stock > 0 ? 'text-yellow-400' : 'text-red-400'}>Stok: {product.stock}</span>}
+          {/* Scrollable Content Section */}
+          <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
+            {product.category && (
+              <div className="inline-block mb-3">
+                <span className="text-xs font-semibold text-amber-400 bg-gradient-to-r from-amber-500/20 to-amber-600/20 border border-amber-500/30 rounded-full px-3 py-1 backdrop-blur-sm animate-glow">
+                  {product.category.name}
+                </span>
               </div>
-            </div>
+            )}
 
-            <div className="px-6 pb-4 overflow-y-auto flex-grow custom-scrollbar">
-              <div 
-                className="text-gray-300 leading-relaxed prose-content animate-fade-in-up"
-                dangerouslySetInnerHTML={{ __html: product.description || '<p>Deskripsi tidak tersedia.</p>' }} 
-              />
-            </div>
+            <h2 className="text-2xl font-bold text-white font-heading mb-3 animate-slide-in-right bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text">
+              {product.name}
+            </h2>
 
-            <div className="p-6 bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-sm border-t border-gray-700/50 flex-shrink-0">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-2">
-                  {product.discount > 0 ? (
-                    <div className="space-y-1">
-                      <div className="flex items-baseline gap-3">
-                        <span className="text-3xl font-bold text-white animate-price-bounce">{formatPrice(discountedPrice)}</span>
-                        <span className="text-lg text-gray-400 line-through">{formatPrice(product.price)}</span>
-                      </div>
-                      <div className="text-sm text-green-400 font-semibold flex items-center gap-2 animate-savings-flash">
-                        <i className="fas fa-piggy-bank"></i>
-                        <span>Hemat {formatPrice(product.price - discountedPrice)}</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <span className="text-3xl font-bold text-white animate-price-bounce">{formatPrice(product.price)}</span>
-                  )}
-                </div>
-
-                <button
-                  onClick={handleAddToCart}
-                  disabled={isSoldOut || addToCartClicked}
-                  className={`w-full sm:w-auto font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform flex items-center justify-center gap-2 min-w-[160px] ${
-                    isSoldOut 
-                      ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                      : addToCartClicked
-                      ? 'bg-gradient-to-r from-green-500 to-green-400 text-white animate-success-pulse cursor-wait'
-                      : 'bg-gradient-to-r from-green-600 to-green-500 text-white hover:from-green-500 hover:to-green-400 hover:shadow-green-500/30 hover:scale-105 active:scale-95 animate-button-glow'
-                  }`}
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-4 animate-slide-in-left">
+              {product.weight && <span>Berat: {product.weight}</span>}
+              {product.volume && <span>Volume: {product.volume}</span>}
+              {product.stock !== undefined && (
+                <span
+                  className={
+                    product.stock > 10
+                      ? 'text-green-400'
+                      : product.stock > 0
+                      ? 'text-yellow-400'
+                      : 'text-red-400'
+                  }
                 >
-                  <i className={`fas ${isSoldOut ? 'fa-times' : addToCartClicked ? 'fa-check animate-check-bounce' : 'fa-cart-plus'}`}></i>
-                  {isSoldOut ? 'Stok Habis' : addToCartClicked ? 'Ditambahkan!' : 'Tambah ke Keranjang'}
-                </button>
+                  Stok: {product.stock}
+                </span>
+              )}
+            </div>
+
+            <div
+              className="text-gray-300 leading-relaxed prose-content animate-fade-in-up"
+              dangerouslySetInnerHTML={{
+                __html: product.description || '<p>Deskripsi tidak tersedia.</p>'
+              }}
+            />
+          </div>
+
+          {/* Footer / Action Area */}
+          <div className="sticky bottom-0 p-6 bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-sm border-t border-gray-700/50 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-2">
+                {product.discount > 0 ? (
+                  <div className="space-y-1">
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-3xl font-bold text-white animate-price-bounce">
+                        {formatPrice(discountedPrice)}
+                      </span>
+                      <span className="text-lg text-gray-400 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                    </div>
+                    <div className="text-sm text-green-400 font-semibold flex items-center gap-2 animate-savings-flash">
+                      <i className="fas fa-piggy-bank"></i>
+                      <span>
+                        Hemat {formatPrice(product.price - discountedPrice)}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-3xl font-bold text-white animate-price-bounce">
+                    {formatPrice(product.price)}
+                  </span>
+                )}
               </div>
+
+              <button
+                onClick={handleAddToCart}
+                disabled={isSoldOut || addToCartClicked}
+                className={`w-full sm:w-auto font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform flex items-center justify-center gap-2 min-w-[160px] ${
+                  isSoldOut
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : addToCartClicked
+                    ? 'bg-gradient-to-r from-green-500 to-green-400 text-white animate-success-pulse cursor-wait'
+                    : 'bg-gradient-to-r from-green-600 to-green-500 text-white hover:from-green-500 hover:to-green-400 hover:shadow-green-500/30 hover:scale-105 active:scale-95 animate-button-glow'
+                }`}
+              >
+                <i
+                  className={`fas ${
+                    isSoldOut
+                      ? 'fa-times'
+                      : addToCartClicked
+                      ? 'fa-check animate-check-bounce'
+                      : 'fa-cart-plus'
+                  }`}
+                ></i>
+                {isSoldOut
+                  ? 'Stok Habis'
+                  : addToCartClicked
+                  ? 'Ditambahkan!'
+                  : 'Tambah ke Keranjang'}
+              </button>
             </div>
           </div>
 
+          {/* Decorative circles */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-500/10 to-transparent rounded-full -translate-y-16 translate-x-16 animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-500/10 to-transparent rounded-full translate-y-12 -translate-x-12 animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div
+            className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-green-500/10 to-transparent rounded-full translate-y-12 -translate-x-12 animate-pulse"
+            style={{ animationDelay: '1s' }}
+          ></div>
         </div>
       </div>
 
@@ -214,8 +250,6 @@ const ProductModal = ({ isOpen, onRequestClose, product }) => {
         .animate-float-2 { animation: float2 8s ease-in-out infinite; }
         .animate-float-3 { animation: float3 5s ease-in-out infinite; }
         .animate-float-4 { animation: float4 7s ease-in-out infinite; }
-        @keyframes gradientShift { 0%, 100% { opacity: 0.3; transform: rotate(0deg); } 50% { opacity: 0.6; transform: rotate(180deg); } }
-        .animate-gradient-shift { animation: gradientShift 10s ease-in-out infinite; }
         @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -237,7 +271,7 @@ const ProductModal = ({ isOpen, onRequestClose, product }) => {
         @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
       `}</style>
     </>,
-    document.body // The modal will be rendered into the body tag
+    document.body
   );
 };
 
