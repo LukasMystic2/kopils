@@ -37,9 +37,21 @@ const allowedOrigins = [
     "http://localhost:3000"  // Your local development URL
 ].filter(Boolean); // This removes any undefined/null values
 
+console.log("DEBUG: Allowed Origins ->", allowedOrigins); // <-- DEBUG
+
 const io = new Server(server, {
     cors: {
-        origin: allowedOrigins, // Use the array of allowed origins
+        origin: function (origin, callback) {
+            console.log("DEBUG: CORS check for origin ->", origin); // <-- DEBUG
+            // allow requests with no origin (like mobile apps or curl requests)
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.indexOf(origin) === -1) {
+                const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+                console.error("DEBUG: CORS Error ->", msg); // <-- DEBUG
+                return callback(new Error(msg), false);
+            }
+            return callback(null, true);
+        },
         methods: ["GET", "POST"]
     }
 });
@@ -112,9 +124,10 @@ const getOnlineUserIds = () => {
 };
 
 io.on('connection', (socket) => {
-    console.log(`✅ Client connected: ${socket.id}`);
+    console.log(`✅ DEBUG: Client connected successfully. Socket ID: ${socket.id}`); // <-- DEBUG
 
     socket.on('registerSocketIds', (ids) => {
+        console.log(`DEBUG: Registering IDs for socket ${socket.id} ->`, ids); // <-- DEBUG
         socket.userRolesIds = ids;
         ids.forEach(userId => {
             if (userSockets.has(userId)) {
@@ -123,6 +136,7 @@ io.on('connection', (socket) => {
                 userSockets.set(userId, new Set([socket.id]));
             }
         });
+        console.log("DEBUG: Current userSockets map ->", userSockets); // <-- DEBUG
         io.emit('getOnlineUsers', getOnlineUserIds());
     });
 
@@ -131,7 +145,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        console.log(`❌ Client disconnected: ${socket.id}`);
+        console.log(`❌ DEBUG: Client disconnected. Socket ID: ${socket.id}`); // <-- DEBUG
         const userIds = socket.userRolesIds;
         if (userIds && Array.isArray(userIds)) {
             userIds.forEach(userId => {
@@ -142,6 +156,7 @@ io.on('connection', (socket) => {
                     }
                 }
             });
+            console.log("DEBUG: userSockets map after disconnect ->", userSockets); // <-- DEBUG
             io.emit('getOnlineUsers', getOnlineUserIds());
         }
     });
