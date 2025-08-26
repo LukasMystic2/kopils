@@ -12,7 +12,8 @@ export const SocketProvider = ({ userInfo, adminInfo, children }) => {
     const API_URL = process.env.REACT_APP_SERVER_URL;
 
     useEffect(() => {
-        const newSocket = io(API_URL);
+        // --- SOLUTION: Force WebSocket transport ---
+        const newSocket = io(API_URL, { transports: ['websocket'] });
         setSocket(newSocket);
 
         const idsToRegister = [];
@@ -30,7 +31,7 @@ export const SocketProvider = ({ userInfo, adminInfo, children }) => {
         return () => {
             newSocket.close();
         }
-    }, [userInfo, adminInfo, API_URL]); // <-- Add API_URL here
+    }, [userInfo, adminInfo, API_URL]);
 
     return (
         <SocketContext.Provider value={socket}>
