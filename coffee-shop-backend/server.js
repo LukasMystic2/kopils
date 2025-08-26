@@ -5,13 +5,13 @@ const cors = require('cors');
 require('dotenv').config();
 const http = require('http');
 const { Server } = require("socket.io");
-const fileUpload = require('express-fileupload'); // 1. IMPORT THE MIDDLEWARE
+const fileUpload = require('express-fileupload');
 
 // Import Models
 const User = require('./models/userModel');
 const Conversation = require('./models/conversationModel');
 const Message = require('./models/messageModel');
-const TermsOfService = require('./models/termsOfServiceModel'); // NEW: Import the new TermsOfService model
+const TermsOfService = require('./models/termsOfServiceModel');
 
 // Import routes
 const productRoutes = require('./routes/productRoutes');
@@ -26,15 +26,20 @@ const orderRoutes = require('./routes/orderRoutes');
 const paymentInfoRoutes = require('./routes/paymentInfoRoutes');
 const aboutRoutes = require('./routes/aboutRoutes');
 const privacyPolicyRoutes = require('./routes/privacyPolicyRoutes');
-const termsOfServiceRoutes = require('./routes/termsOfServiceRoutes'); // NEW: Import new routes
+const termsOfServiceRoutes = require('./routes/termsOfServiceRoutes');
 
 const app = express();
 const server = http.createServer(app);
-const clientURL = process.env.CLIENT_URL || "http://localhost:3000";
+
+// --- SOLUTION: Define allowed origins ---
+const allowedOrigins = [
+    process.env.CLIENT_URL, // Your Vercel URL from .env
+    "http://localhost:3000"  // Your local development URL
+].filter(Boolean); // This removes any undefined/null values
 
 const io = new Server(server, {
     cors: {
-        origin: clientURL, // Use the variable here
+        origin: allowedOrigins, // Use the array of allowed origins
         methods: ["GET", "POST"]
     }
 });
@@ -44,16 +49,12 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-// 2. USE THE FILE UPLOAD MIDDLEWARE GLOBALLY AGAIN
 app.use(fileUpload({
   useTempFiles: true,
   tempFileDir: '/tmp/'
 }));
 
-// ====================================================================
-// START: Middleware Configuration
-// ====================================================================
-// All routes will now use the global express-fileupload middleware.
+// Routes
 app.use('/api/upload', uploadRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/products', productRoutes);
@@ -66,10 +67,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/payment-info', paymentInfoRoutes);
 app.use('/api/about', aboutRoutes);
 app.use('/api/privacy-policy', privacyPolicyRoutes);
-app.use('/api/terms-of-service', termsOfServiceRoutes); // NEW: Add terms of service routes
-// ====================================================================
-// END: Middleware Configuration
-// ====================================================================
+app.use('/api/terms-of-service', termsOfServiceRoutes);
 
 // --- Admin Seeding Function ---
 const seedAdminUsers = async () => {
@@ -173,13 +171,10 @@ io.on('connection', (socket) => {
             io.emit('updateConversationList', conversation);
 
             // --- NEW: Notification Logic ---
-            // Find the recipient (the one who is NOT the sender)
             const recipient = conversation.participants.find(p => p._id.toString() !== senderId);
             if (recipient) {
-                // Check if recipient is online
                 const recipientSockets = userSockets.get(recipient._id.toString());
                 if (recipientSockets && recipientSockets.size > 0) {
-                    // If they are online, emit a notification to all their connected sockets
                     recipientSockets.forEach(socketId => {
                         io.to(socketId).emit('newMessageNotification', {
                             conversationId: conversationId,
@@ -194,7 +189,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- NEW: Mark messages as read ---
     socket.on('markAsRead', async ({ conversationId, userId }) => {
         try {
             await Message.updateMany(
