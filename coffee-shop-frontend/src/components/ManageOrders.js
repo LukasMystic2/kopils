@@ -391,7 +391,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
 };
 
 const ManageOrders = ({ showNotification, token }) => {
-    const API_URL = `${process.env.SERVER_URL}`;
+    const API_URL = `${process.env.REACT_APP_SERVER_URL}`;
     const { data: orders, loading, error, setData: setOrders } = useFetch(`${API_URL}/api/orders`, token, true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
