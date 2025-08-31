@@ -81,6 +81,12 @@ const Footer = () => {
         { name: 'Berita', href: '/news', icon: 'fas fa-newspaper' }
     ];
 
+    const deliveryLinks = [
+        { name: 'GoFood', href: 'https://gofood.link/a/R8bbwFf', icon: 'fas fa-motorcycle' },
+        { name: 'GrabFood', href: 'https://r.grab.com/g/2-1-6-C7MBE2NZN3AGJJ', icon: 'fas fa-motorcycle' },
+        { name: 'ShopeeFood', href: 'https://shopee.co.id/universal-link/now-food/shop/22341330?deep_and_deferred=1&shareChannel=whatsapp', icon: 'fas fa-motorcycle' }
+    ];
+
     const legalLinks = [
         { name: 'Kebijakan Layanan', href: '/terms-of-service', icon: 'fas fa-shield-alt' },
         { name: 'Kebijakan Privasi', href: '/privacy-policy', icon: 'fas fa-lock' }
@@ -142,7 +148,7 @@ const Footer = () => {
                 </div>
 
                 {/* Main Content Grid with Staggered Animation */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                     
                     {/* Quick Links with Enhanced Styling */}
                     <div className={`text-center md:text-left transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`} style={{ transitionDelay: '200ms' }}>
@@ -169,8 +175,35 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    {/* Contact Info with Animation */}
+                    {/* Delivery Links Section */}
                     <div className={`text-center md:text-left transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '400ms' }}>
+                        <h4 className="text-lg font-semibold text-amber-400 mb-4 flex items-center justify-center md:justify-start gap-2 group">
+                            <i className="fas fa-shipping-fast text-sm group-hover:animate-pulse"></i>
+                            Pesan Antar
+                            <div className="h-0.5 bg-gradient-to-r from-amber-400 to-transparent w-8 group-hover:w-12 transition-all duration-300"></div>
+                        </h4>
+                        <ul className="space-y-3">
+                            {deliveryLinks.map((link, index) => (
+                                <li key={index} className="transform hover:translate-x-2 transition-transform duration-300">
+                                    <a
+                                        href={link.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-300 hover:text-amber-400 transition-all duration-300 text-sm flex items-center justify-center md:justify-start gap-3 group py-1 px-2 rounded-lg hover:bg-amber-500/10"
+                                    >
+                                        <i className={`${link.icon} text-xs opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300`}></i>
+                                        <span className="relative">
+                                            {link.name}
+                                            <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-amber-400 group-hover:w-full transition-all duration-300"></div>
+                                        </span>
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Contact Info with Animation */}
+                    <div className={`text-center md:text-left transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '600ms' }}>
                         <h4 className="text-lg font-semibold text-amber-400 mb-4 flex items-center justify-center md:justify-start gap-2 group">
                             <i className="fas fa-phone text-sm group-hover:animate-pulse"></i>
                             Kontak
@@ -204,7 +237,7 @@ const Footer = () => {
                     </div>
 
                     {/* Legal Links with Animation */}
-                    <div className={`text-center md:text-left transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`} style={{ transitionDelay: '600ms' }}>
+                    <div className={`text-center md:text-left transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`} style={{ transitionDelay: '800ms' }}>
                         <h4 className="text-lg font-semibold text-amber-400 mb-4 flex items-center justify-center md:justify-start gap-2 group">
                             <i className="fas fa-shield-alt text-sm group-hover:animate-pulse"></i>
                             Kebijakan
@@ -234,7 +267,7 @@ const Footer = () => {
                     {/* Animated gradient line */}
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-amber-500 to-transparent animate-pulse"></div>
                     
-                    <div className={`flex flex-col items-center gap-6 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`} style={{ transitionDelay: '800ms' }}>
+                    <div className={`flex flex-col items-center gap-6 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`} style={{ transitionDelay: '1000ms' }}>
                         
                         {/* Social Media with Enhanced Effects */}
                         <div className="flex items-center gap-4">
