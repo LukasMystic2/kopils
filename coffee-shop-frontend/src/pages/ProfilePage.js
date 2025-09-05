@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
+const HalamanProfil = ({ userInfo, showNotification, onLogout, onUpdate }) => {
     const API_URL = process.env.REACT_APP_SERVER_URL;
     
     const [name, setName] = useState('');
@@ -400,7 +400,7 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
         e.preventDefault();
 
         if (email !== userInfo.email) {
-            if (!window.confirm("Changing your email will log you out and require re-verification. Are you sure you want to continue?")) {
+            if (!window.confirm("Mengubah email akan membuat Anda keluar dan memerlukan verifikasi ulang. Apakah Anda yakin ingin melanjutkan?")) {
                 return;
             }
         }
@@ -419,7 +419,7 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                     body: formData,
                 });
 
-                if (!response.ok) throw new Error('Failed to upload profile picture');
+                if (!response.ok) throw new Error('Gagal mengunggah foto profil');
                 const data = await response.json();
                 finalProfilePictureUrl = data.url;
             } catch (error) {
@@ -452,10 +452,10 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
             const data = await response.json();
             if (!response.ok) throw new Error(data.message);
             
-            showNotification('Profile updated successfully!');
+            showNotification('Profil berhasil diperbarui!');
             
             if(data.needsVerification) {
-                showNotification('Please check your new email to re-verify your account.', 'success');
+                showNotification('Silakan periksa email baru Anda untuk memverifikasi ulang akun Anda.', 'success');
                 onLogout();
             } else {
                 onUpdate(data);
@@ -470,7 +470,7 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
     const handlePasswordUpdate = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            return showNotification('Passwords do not match', 'error');
+            return showNotification('Kata sandi tidak cocok', 'error');
         }
         setIsSubmitting(true);
         try {
@@ -482,7 +482,7 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
             const data = await response.json();
             if (!response.ok) throw new Error(data.message);
             
-            showNotification('Password updated successfully!');
+            showNotification('Kata sandi berhasil diperbarui!');
             setPassword('');
             setConfirmPassword('');
         } catch (error) {
@@ -504,7 +504,7 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                 <div className="min-h-screen flex items-center justify-center">
                     <div className="text-center">
                         <div className="loading-spinner w-8 h-8 border-4 border-gray-600 border-t-amber-400 rounded-full mx-auto mb-4"></div>
-                        <div className="text-xl text-white">Loading Profile...</div>
+                        <div className="text-xl text-white">Memuat Profil...</div>
                     </div>
                 </div>
             </>
@@ -525,17 +525,17 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                 >
                     <div className="profile-container rounded-2xl p-6 sm:p-8 lg:p-12">
                         <h1 className="profile-header text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-12">
-                            Your Profile
+                            Profil Anda
                         </h1>
                         
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {/* Profile Info Card */}
+                            {/* Kartu Info Profil */}
                             <div className="lg:col-span-1">
                                 <div className="profile-card rounded-xl p-6 text-center">
                                     <div className="relative inline-block mb-6">
                                         <img 
-                                            src={profilePictureUrl || 'https://placehold.co/200x200/1f2937/4b5563?text=No+Image'} 
-                                            alt="Profile" 
+                                            src={profilePictureUrl || 'https://placehold.co/200x200/1f2937/4b5563?text=Tidak+Ada+Gambar'} 
+                                            alt="Profil" 
                                             className="profile-picture w-32 h-32 sm:w-48 sm:h-48 rounded-full object-cover border-4 border-gray-600 mx-auto"
                                         />
                                     </div>
@@ -558,21 +558,21 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                 </div>
                             </div>
 
-                            {/* Forms Section */}
+                            {/* Bagian Formulir */}
                             <div className="lg:col-span-2 space-y-6">
-                                {/* Profile Details Form */}
+                                {/* Formulir Detail Profil */}
                                 <div className="form-section rounded-xl p-6">
                                     <form onSubmit={handleProfileUpdate} className="space-y-6">
                                         <h3 className="section-header text-xl sm:text-2xl">
-                                            Update Details
+                                            Perbarui Detail
                                         </h3>
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block text-sm text-gray-400 mb-2">Full Name</label>
+                                                <label className="block text-sm text-gray-400 mb-2">Nama Lengkap</label>
                                                 <input 
                                                     type="text" 
-                                                    placeholder="Enter your full name" 
+                                                    placeholder="Masukkan nama lengkap Anda" 
                                                     value={name} 
                                                     onChange={(e) => setName(e.target.value)} 
                                                     className="enhanced-input w-full p-3 rounded-lg text-white placeholder-gray-500"
@@ -581,10 +581,10 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                             </div>
                                             
                                             <div>
-                                                <label className="block text-sm text-gray-400 mb-2">Email Address</label>
+                                                <label className="block text-sm text-gray-400 mb-2">Alamat Email</label>
                                                 <input 
                                                     type="email" 
-                                                    placeholder="Enter your email" 
+                                                    placeholder="Masukkan email Anda" 
                                                     value={email} 
                                                     onChange={(e) => setEmail(e.target.value)} 
                                                     className="enhanced-input w-full p-3 rounded-lg text-white placeholder-gray-500"
@@ -594,10 +594,10 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm text-gray-400 mb-2">Phone Number</label>
+                                            <label className="block text-sm text-gray-400 mb-2">Nomor Telepon</label>
                                             <input 
                                                 type="tel" 
-                                                placeholder="Enter your phone number" 
+                                                placeholder="Masukkan nomor telepon Anda" 
                                                 value={phoneNumber} 
                                                 onChange={(e) => setPhoneNumber(e.target.value)} 
                                                 className="enhanced-input w-full p-3 rounded-lg text-white placeholder-gray-500"
@@ -605,9 +605,9 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm text-gray-400 mb-2">Shipping Address</label>
+                                            <label className="block text-sm text-gray-400 mb-2">Alamat Pengiriman</label>
                                             <textarea 
-                                                placeholder="Enter your complete address" 
+                                                placeholder="Masukkan alamat lengkap Anda" 
                                                 value={address} 
                                                 onChange={(e) => setAddress(e.target.value)} 
                                                 className="enhanced-input w-full p-3 rounded-lg text-white placeholder-gray-500" 
@@ -616,7 +616,7 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                         </div>
 
                                         <div>
-                                            <label className="block text-sm text-gray-400 mb-2">Profile Picture</label>
+                                            <label className="block text-sm text-gray-400 mb-2">Foto Profil</label>
                                             <div className="file-upload">
                                                 <input 
                                                     type="file" 
@@ -626,7 +626,7 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                                 <div className="text-center">
                                                     <div className="text-amber-400 text-2xl mb-2">📷</div>
                                                     <div className="text-sm text-gray-400">
-                                                        Click to upload new profile picture
+                                                        Klik untuk mengunggah foto profil baru
                                                     </div>
                                                 </div>
                                             </div>
@@ -636,7 +636,7 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                                     onClick={handleRemovePicture} 
                                                     className="remove-button text-sm mt-2 hover:underline"
                                                 >
-                                                    ✕ Remove current picture
+                                                    ✕ Hapus gambar saat ini
                                                 </button>
                                             )}
                                         </div>
@@ -649,28 +649,28 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                             {isSubmitting ? (
                                                 <>
                                                     <span className="loading-spinner mr-2"></span>
-                                                    Updating...
+                                                    Memperbarui...
                                                 </>
                                             ) : (
-                                                'Update Profile'
+                                                'Perbarui Profil'
                                             )}
                                         </button>
                                     </form>
                                 </div>
 
-                                {/* Password Change Form */}
+                                {/* Formulir Ubah Kata Sandi */}
                                 <div className="form-section rounded-xl p-6">
                                     <form onSubmit={handlePasswordUpdate} className="space-y-6">
                                         <h3 className="section-header text-xl sm:text-2xl">
-                                            🔒 Change Password
+                                            🔒 Ubah Kata Sandi
                                         </h3>
                                         
                                         <div className="space-y-4">
                                             <div>
-                                                <label className="block text-sm text-gray-400 mb-2">New Password</label>
+                                                <label className="block text-sm text-gray-400 mb-2">Kata Sandi Baru</label>
                                                 <input 
                                                     type="password" 
-                                                    placeholder="Enter new password" 
+                                                    placeholder="Masukkan kata sandi baru" 
                                                     value={password} 
                                                     onChange={(e) => setPassword(e.target.value)} 
                                                     className="enhanced-input w-full p-3 rounded-lg text-white placeholder-gray-500"
@@ -679,10 +679,10 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                             </div>
                                             
                                             <div>
-                                                <label className="block text-sm text-gray-400 mb-2">Confirm Password</label>
+                                                <label className="block text-sm text-gray-400 mb-2">Konfirmasi Kata Sandi</label>
                                                 <input 
                                                     type="password" 
-                                                    placeholder="Confirm new password" 
+                                                    placeholder="Konfirmasi kata sandi baru" 
                                                     value={confirmPassword} 
                                                     onChange={(e) => setConfirmPassword(e.target.value)} 
                                                     className="enhanced-input w-full p-3 rounded-lg text-white placeholder-gray-500"
@@ -699,10 +699,10 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
                                             {isSubmitting ? (
                                                 <>
                                                     <span className="loading-spinner mr-2"></span>
-                                                    Updating...
+                                                    Memperbarui...
                                                 </>
                                             ) : (
-                                                'Change Password'
+                                                'Ubah Kata Sandi'
                                             )}
                                         </button>
                                     </form>
@@ -716,4 +716,4 @@ const ProfilePage = ({ userInfo, showNotification, onLogout, onUpdate }) => {
     );
 };
 
-export default ProfilePage;
+export default HalamanProfil;
