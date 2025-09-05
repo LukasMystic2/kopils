@@ -39,7 +39,7 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
 
     const handleUploadShippingProof = async (orderId) => {
         if (!shippingProofFile) {
-            showNotification('📁 Please select a file to upload.', 'error');
+            showNotification('📁 Silakan pilih file untuk diunggah.', 'error');
             return;
         }
         setUploadingOrderId(orderId);
@@ -54,7 +54,7 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
                 headers: { 'Authorization': `Bearer ${userInfo.token}` },
                 body: formData,
             });
-            if (!uploadResponse.ok) throw new Error('Failed to upload proof.');
+            if (!uploadResponse.ok) throw new Error('Gagal mengunggah bukti.');
             const uploadResult = await uploadResponse.json();
             const shippingPaymentProofUrl = uploadResult.url;
 
@@ -67,9 +67,9 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
                 },
                 body: JSON.stringify({ shippingPaymentProofUrl }),
             });
-            if (!updateResponse.ok) throw new Error('Failed to update order with shipping proof URL.');
+            if (!updateResponse.ok) throw new Error('Gagal memperbarui pesanan dengan URL bukti pengiriman.');
 
-            showNotification('✅ Shipping payment proof uploaded successfully!');
+            showNotification('✅ Bukti pembayaran pengiriman berhasil diunggah!');
             
             // Refetch orders to show the new status
             const updatedOrdersRes = await fetch(`${API_URL}/api/orders/myorders`, { headers: { 'Authorization': `Bearer ${userInfo.token}` }});
@@ -94,6 +94,14 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
             day: 'numeric', 
             hour: '2-digit', 
             minute: '2-digit' 
+        });
+    };
+
+    const formatDateOnly = (dateString) => {
+        return new Date(dateString).toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
         });
     };
 
@@ -424,7 +432,7 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
                                                 alignItems: 'center',
                                                 gap: '0.5rem'
                                             }}>
-                                                � Dipesan pada: {formatDate(order.createdAt)}
+                                                📅 Dipesan pada: {formatDate(order.createdAt)}
                                             </p>
                                         </div>
                                         
@@ -593,16 +601,16 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
                                                         🚚 Pengiriman ({order.shippingMethod})
                                                     </span>
                                                     <span style={{ 
-                                                        color: order.status === 'Cancelled' && order.shippingMethod === 'Pickup' 
-                                                                ? '#f87171' 
-                                                                : order.shippingCost ? '#9ca3af' : '#f59e0b',
+                                                        color: order.shippingMethod === 'Pickup' 
+                                                                ? (order.status === 'Cancelled' ? '#f87171' : '#2dd4bf') 
+                                                                : (order.shippingCost ? '#9ca3af' : '#f59e0b'),
                                                         fontFamily: 'monospace',
                                                         fontWeight: '600',
                                                         fontSize: '0.85rem',
                                                         textDecoration: order.status === 'Cancelled' && order.shippingMethod === 'Pickup' ? 'line-through' : 'none'
                                                     }}>
-                                                        {order.status === 'Cancelled' && order.shippingMethod === 'Pickup' 
-                                                            ? 'Dibatalkan' 
+                                                        {order.shippingMethod === 'Pickup'
+                                                            ? (order.status === 'Cancelled' ? 'Dibatalkan' : 'Gratis')
                                                             : (order.shippingCost ? formatPrice(order.shippingCost) : '⏳ Menunggu')}
                                                     </span>
                                                 </div>
@@ -684,7 +692,7 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
                                                         color: '#d1d5db',
                                                         margin: '0.25rem 0 0 0'
                                                     }}>
-                                                        Pesanan Anda sedang disiapkan dengan teliti. Estimasi selesai pada: <strong style={{ color: '#38bdf8' }}>{formatDate(order.estimatedCompletionDate)}</strong>
+                                                        Pesanan Anda sedang disiapkan dengan teliti. Estimasi selesai pada: <strong style={{ color: '#38bdf8' }}>{formatDateOnly(order.estimatedCompletionDate)}</strong>
                                                     </p>
                                                 </div>
                                             </div>
@@ -734,7 +742,7 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
                                         </div>
                                     )}
 
-                                    {order.shippingMethod === 'Pickup' && order.status === 'Ready for Pickup' && order.estimatedCompletionDate && (
+                                    {order.shippingMethod === 'Pickup' && order.status === 'Ready for Pickup' && (
                                         <div style={{
                                             padding: '1.5rem',
                                             borderRadius: '1rem',
@@ -782,7 +790,7 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
                                                         color: '#d1d5db',
                                                         margin: '0.25rem 0 0 0'
                                                     }}>
-                                                        Pesanan siap diambil pada atau setelah <strong style={{ color: '#2dd4bf' }}>{formatDate(order.estimatedCompletionDate)}</strong>. 
+                                                        Pesanan Anda sudah siap dan dapat diambil selama jam buka (pukul 08.00 - 20.00 WIB).
                                                         <a 
                                                             href="https://maps.app.goo.gl/96GfTxSETvJzNx457" 
                                                             target="_blank" 
@@ -1258,3 +1266,4 @@ const MyOrdersPage = ({ userInfo, showNotification }) => {
 };
 
 export default MyOrdersPage;
+
