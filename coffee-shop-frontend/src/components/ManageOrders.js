@@ -1,5 +1,46 @@
-import React, { useState } from 'react';
-import useFetch from '../hooks/useFetch';
+import React, { useState, useEffect } from 'react';
+
+const useFetch = (url, token, isPrivate = false) => {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const headers = { 'Content-Type': 'application/json' };
+                if (isPrivate && token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                const response = await fetch(url, { headers });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                setData(result);
+                setError(null);
+            } catch (e) {
+                setError(e.message);
+                setData(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (isPrivate && !token) {
+            setLoading(false);
+            setData([]);
+            return;
+        }
+
+        fetchData();
+    }, [url, token, isPrivate]);
+
+    return { data, loading, error, setData };
+};
+
 
 const OrderManager = ({ order, token, showNotification, onUpdate }) => {
     const [status, setStatus] = useState(order.status);
@@ -24,9 +65,9 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                 },
                 body: JSON.stringify({ status, shippingCost, shippingProvider, shippingId, cancellationReason, estimatedCompletionDate }),
             });
-            if (!response.ok) throw new Error('Failed to update order');
+            if (!response.ok) throw new Error('Gagal memperbarui pesanan');
             onUpdate();
-            showNotification('✅ Order updated successfully!');
+            showNotification('✅ Pesanan berhasil diperbarui!');
         } catch (err) {
             showNotification(`❌ ${err.message}`, 'error');
         } finally {
@@ -35,7 +76,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
     };
 
     const handleRemoveProof = async (proofType) => {
-        if (window.confirm(`🗑️ Are you sure you want to remove this ${proofType.replace('Proof', '')} proof?`)) {
+        if (window.confirm(`🗑️ Anda yakin ingin menghapus bukti ${proofType.replace('Proof', '')} ini?`)) {
             try {
                 const response = await fetch(`${API_URL}/api/orders/${order._id}`, {
                     method: 'PUT',
@@ -45,9 +86,9 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                     },
                     body: JSON.stringify({ [proofType]: null }),
                 });
-                if (!response.ok) throw new Error('Failed to remove proof');
+                if (!response.ok) throw new Error('Gagal menghapus bukti');
                 onUpdate();
-                showNotification('🗑️ Proof removed successfully!');
+                showNotification('🗑️ Bukti berhasil dihapus!');
             } catch (err) {
                 showNotification(`❌ ${err.message}`, 'error');
             }
@@ -55,15 +96,15 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
     };
 
     const handleDeleteOrder = async () => {
-        if (window.confirm('⚠️ Are you sure you want to permanently delete this order? This cannot be undone.')) {
+        if (window.confirm('⚠️ Anda yakin ingin menghapus pesanan ini secara permanen? Tindakan ini tidak dapat dibatalkan.')) {
             try {
                 const response = await fetch(`${API_URL}/api/orders/${order._id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (!response.ok) throw new Error('Failed to delete order');
+                if (!response.ok) throw new Error('Gagal menghapus pesanan');
                 onUpdate();
-                showNotification('🗑️ Order deleted successfully!');
+                showNotification('🗑️ Pesanan berhasil dihapus!');
             } catch (err) {
                 showNotification(`❌ ${err.message}`, 'error');
             }
@@ -71,7 +112,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
     };
 
     const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
-    const formatDate = (dateString) => new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const formatDate = (dateString) => new Date(dateString).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
 
     const deliveryStatuses = ['Pending Payment', 'Awaiting Shipping Payment', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
     const pickupStatuses = ['Pending Payment', 'Processing', 'Ready for Pickup', 'Received', 'Cancelled'];
@@ -137,7 +178,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <h3 className="font-bold text-amber-400 text-xl">
-                            📋 Order #{order._id.substring(0,8)}
+                            📋 Pesanan #{order._id.substring(0,8)}
                         </h3>
                         <div className={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(status)}`}>
                             {getStatusEmoji(status)} {status}
@@ -158,7 +199,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                         onMouseEnter={(e) => Object.assign(e.target.style, hoverButtonStyle)}
                         onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
                     >
-                        {isExpanded ? '📖 Less' : '📝 Details'}
+                        {isExpanded ? '📖 Lebih Sedikit' : '📝 Detail'}
                     </button>
                     <button 
                         onClick={handleDeleteOrder}
@@ -167,7 +208,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                         onMouseEnter={(e) => Object.assign(e.target.style, hoverButtonStyle)}
                         onMouseLeave={(e) => Object.assign(e.target.style, buttonStyle)}
                     >
-                        🗑️ Delete
+                        🗑️ Hapus
                     </button>
                 </div>
             </div>
@@ -185,12 +226,12 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                     {/* Customer Details */}
                     <div className="space-y-3">
                         <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
-                            👤 Customer Details
+                            👤 Detail Pelanggan
                         </h4>
                         <div className="space-y-2 bg-gray-900/50 p-4 rounded-lg border border-gray-700/30">
                             <p className="text-sm text-gray-300 font-medium">{order.user.name}</p>
                             <p className="text-sm text-gray-400 flex items-center gap-2">📧 {order.user.email}</p>
-                            <p className="text-sm text-gray-400 flex items-center gap-2">📱 {order.user.phoneNumber || 'No phone number'}</p>
+                            <p className="text-sm text-gray-400 flex items-center gap-2">📱 {order.user.phoneNumber || 'Nomor telepon tidak ada'}</p>
                             <p className="text-sm text-gray-400 mt-3 flex items-start gap-2">
                                 🏠 <span>{order.user.address || 'N/A'}</span>
                             </p>
@@ -200,7 +241,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                     {/* Order Items */}
                     <div className="space-y-3">
                         <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
-                            🛒 Order Items
+                            🛒 Item Pesanan
                         </h4>
                         <div className="space-y-2 bg-gray-900/50 p-4 rounded-lg border border-gray-700/30">
                             {order.orderItems.map((item, index) => (
@@ -223,43 +264,43 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                     {/* Payment Proofs */}
                     <div className="space-y-3">
                         <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
-                            💳 Payment Proofs
+                            💳 Bukti Pembayaran
                         </h4>
                         <div className="space-y-3 bg-gray-900/50 p-4 rounded-lg border border-gray-700/30">
                             <div className="space-y-2">
-                                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Item Payment</p>
+                                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Pembayaran Item</p>
                                 {order.paymentProof ? (
                                     <div className="flex items-center justify-between gap-2 p-2 bg-green-500/10 border border-green-500/20 rounded">
-                                        <span className="text-sm text-green-300">✅ Uploaded</span>
+                                        <span className="text-sm text-green-300">✅ Terunggah</span>
                                         <div className="flex gap-2">
                                             <a href={order.paymentProof} target="_blank" rel="noopener noreferrer" 
-                                               className="text-blue-400 hover:text-blue-300 text-xs underline">View</a>
+                                               className="text-blue-400 hover:text-blue-300 text-xs underline">Lihat</a>
                                             <button onClick={() => handleRemoveProof('paymentProof')} 
-                                                    className="text-red-400 hover:text-red-300 text-xs underline">Remove</button>
+                                                    className="text-red-400 hover:text-red-300 text-xs underline">Hapus</button>
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="p-2 bg-gray-500/10 border border-gray-500/20 rounded">
-                                        <p className="text-sm text-gray-500">❌ No proof uploaded</p>
+                                        <p className="text-sm text-gray-500">❌ Tidak ada bukti terunggah</p>
                                     </div>
                                 )}
                             </div>
                             
                             <div className="space-y-2">
-                                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Shipping Payment</p>
+                                <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Pembayaran Pengiriman</p>
                                 {order.shippingPaymentProof ? (
                                     <div className="flex items-center justify-between gap-2 p-2 bg-green-500/10 border border-green-500/20 rounded">
-                                        <span className="text-sm text-green-300">✅ Uploaded</span>
+                                        <span className="text-sm text-green-300">✅ Terunggah</span>
                                         <div className="flex gap-2">
                                             <a href={order.shippingPaymentProof} target="_blank" rel="noopener noreferrer" 
-                                               className="text-blue-400 hover:text-blue-300 text-xs underline">View</a>
+                                               className="text-blue-400 hover:text-blue-300 text-xs underline">Lihat</a>
                                             <button onClick={() => handleRemoveProof('shippingPaymentProof')} 
-                                                    className="text-red-400 hover:text-red-300 text-xs underline">Remove</button>
+                                                    className="text-red-400 hover:text-red-300 text-xs underline">Hapus</button>
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="p-2 bg-gray-500/10 border border-gray-500/20 rounded">
-                                        <p className="text-sm text-gray-500">❌ No proof uploaded</p>
+                                        <p className="text-sm text-gray-500">❌ Tidak ada bukti terunggah</p>
                                     </div>
                                 )}
                             </div>
@@ -270,7 +311,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                 {/* Management Section */}
                 <div className="space-y-4">
                     <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
-                        ⚙️ Manage Order
+                        ⚙️ Kelola Pesanan
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="space-y-2">
@@ -290,7 +331,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                             <div className="space-y-2" style={{
                                 animation: 'fadeIn 0.3s ease-in-out'
                             }}>
-                                <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">Est. Completion</label>
+                                <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">Estimasi Selesai</label>
                                 <input 
                                     type="date" 
                                     value={estimatedCompletionDate} 
@@ -303,7 +344,7 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                         {order.shippingMethod === 'Delivery' && (
                             <>
                                 <div className="space-y-2">
-                                    <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">💰 Shipping Cost</label>
+                                    <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">💰 Biaya Pengiriman</label>
                                     <input 
                                         type="number" 
                                         value={shippingCost} 
@@ -312,23 +353,23 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">🚚 Provider</label>
+                                    <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">🚚 Penyedia</label>
                                     <input 
                                         type="text" 
                                         value={shippingProvider} 
                                         onChange={(e) => setShippingProvider(e.target.value)} 
                                         className="w-full p-3 bg-gray-900/80 rounded-lg border border-gray-600/50 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" 
-                                        placeholder="e.g. JNE, J&T"
+                                        placeholder="cth. JNE, J&T"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">📦 Tracking ID</label>
+                                    <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">📦 ID Pelacakan</label>
                                     <input 
                                         type="text" 
                                         value={shippingId} 
                                         onChange={(e) => setShippingId(e.target.value)} 
                                         className="w-full p-3 bg-gray-900/80 rounded-lg border border-gray-600/50 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all" 
-                                        placeholder="Enter tracking number"
+                                        placeholder="Masukkan nomor pelacakan"
                                     />
                                 </div>
                             </>
@@ -339,11 +380,11 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                         <div className="mt-4 space-y-2" style={{
                             animation: 'fadeIn 0.3s ease-in-out'
                         }}>
-                            <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">❌ Cancellation Reason</label>
+                            <label className="text-xs text-gray-400 uppercase tracking-wide font-medium">❌ Alasan Pembatalan</label>
                             <textarea 
                                 value={cancellationReason} 
                                 onChange={(e) => setCancellationReason(e.target.value)} 
-                                placeholder="Reason visible to customer..." 
+                                placeholder="Alasan akan terlihat oleh pelanggan..." 
                                 className="w-full p-3 bg-gray-900/80 rounded-lg border border-gray-600/50 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all resize-none" 
                                 rows="3" 
                             />
@@ -369,10 +410,10 @@ const OrderManager = ({ order, token, showNotification, onUpdate }) => {
                             {isUpdating ? (
                                 <>
                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                    Saving...
+                                    Menyimpan...
                                 </>
                             ) : (
-                                <>💾 Save Changes</>
+                                <>💾 Simpan Perubahan</>
                             )}
                         </button>
                     </div>
@@ -416,7 +457,7 @@ const ManageOrders = ({ showNotification, token }) => {
         <div className="flex items-center justify-center py-12">
             <div className="text-center space-y-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto"></div>
-                <p className="text-gray-400">📋 Loading orders...</p>
+                <p className="text-gray-400">📋 Memuat pesanan...</p>
             </div>
         </div>
     );
@@ -441,16 +482,16 @@ const ManageOrders = ({ showNotification, token }) => {
             >
                 <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                     <div>
-                        <h2 className="text-2xl font-bold text-white mb-2">📋 Order Management</h2>
+                        <h2 className="text-2xl font-bold text-white mb-2">📋 Manajemen Pesanan</h2>
                         <p className="text-gray-400 text-sm">
-                            {filteredOrders.length} order{filteredOrders.length !== 1 ? 's' : ''} found
+                            {filteredOrders.length} pesanan ditemukan
                         </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                         <div className="relative">
                             <input
                                 type="text"
-                                placeholder="🔍 Search orders, customers..."
+                                placeholder="🔍 Cari pesanan, pelanggan..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full sm:w-64 pl-4 pr-4 py-3 bg-gray-900/80 rounded-lg border border-gray-600/50 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
@@ -463,7 +504,7 @@ const ManageOrders = ({ showNotification, token }) => {
                         >
                             {allStatuses.map(status => (
                                 <option key={status} value={status}>
-                                    {status === 'All' ? '📊 All Status' : status}
+                                    {status === 'All' ? '📊 Semua Status' : status}
                                 </option>
                             ))}
                         </select>
@@ -493,11 +534,11 @@ const ManageOrders = ({ showNotification, token }) => {
                     <div className="text-center py-12">
                         <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 rounded-2xl p-8 max-w-md mx-auto">
                             <div className="text-6xl mb-4">📭</div>
-                            <p className="text-gray-400 text-lg mb-2">No orders found</p>
+                            <p className="text-gray-400 text-lg mb-2">Tidak ada pesanan ditemukan</p>
                             <p className="text-gray-500 text-sm">
                                 {searchTerm || statusFilter !== 'All' 
-                                    ? 'Try adjusting your search or filter criteria' 
-                                    : 'Orders will appear here once customers place them'
+                                    ? 'Coba sesuaikan kriteria pencarian atau filter Anda' 
+                                    : 'Pesanan akan muncul di sini setelah pelanggan memesan'
                                 }
                             </p>
                         </div>
